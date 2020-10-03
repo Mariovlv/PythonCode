@@ -1,0 +1,13 @@
+# Cambia los valores de la lista
+a = [-23, 89, 18, 19, 20, 21, 60]
+i = 0
+while i < len(a)-1:
+    if a[i] > a[i+1]:
+        n = a[i]
+        a[i] = a[i+1]
+        a[i+1] = n
+        i = 0
+    else:
+        i += 1
+
+print(a)
