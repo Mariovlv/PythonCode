@@ -1,0 +1,37 @@
+import matplotlib.pyplot as plt
+import numpy as np 
+
+def graphF(a, b, n):
+    ejexi = np.arange(a, b, n)
+    ejeyi = []
+
+    for i in range(len(ejexi)):
+        # Modificar la función
+        yi = 1 / ejexi[i]
+        ejeyi.append(yi)
+    
+    plt.title("Gráfica de la función $f(x)$")
+    plt.grid(True)
+    plt.plot(ejexi, ejeyi, "r")
+    plt.show
+    return 
+
+def sumRiemann(a, b, n): 
+    sum = 0 
+    for i in range(n): 
+        particion = (b-a)/n 
+        eps = a + (i/n) 
+        # Modificar la función
+        funcion = 1 / eps 
+        x = i + 1
+        y = 1 / x
+        ejey.append(y) 
+        suma = funcion * particion 
+        sum += suma 
+    return sum 
+
+# Los valores de a, b son el intervalo, n es el número de particiones 
+print( "El valor de la integral es:", sumRiemann(1, 2, 500)) 
+
+# los valores a, b corresponden al intervalo, n es la cantidad de puntos para graficar
+graphF(1, 2, 0.0001)
