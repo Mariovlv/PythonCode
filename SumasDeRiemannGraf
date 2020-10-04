@@ -23,9 +23,6 @@ def sumRiemann(a, b, n):
         eps = a + (i/n) 
         # Modificar la función
         funcion = 1 / eps 
-        x = i + 1
-        y = 1 / x
-        ejey.append(y) 
         suma = funcion * particion 
         sum += suma 
     return sum 
