@@ -1,0 +1,171 @@
+import turtle
+import time
+import random
+
+# Variables de tiempo y marcador
+posponer = 0.1
+score = 0
+high_score = 0
+
+
+# Crear una ventana, puedes cambiar el color y el tamaño (NO ES RECOMENDABLE QUE CAMBIES EL TAMAÑO PUES DEBERÁS CAMBIAR TAMBIÉN ALGUNOS PARÁMETROS ABAJO)
+
+wn = turtle.Screen()
+wn.title("Sucesiones")
+wn.bgcolor("black")
+wn.setup(width=600, height=600)
+wn.tracer(0)
+
+# Crear la cabeza/personaje que será movible
+
+personaje = turtle.Turtle()
+personaje.speed(0)
+personaje.shape("square")
+personaje.color("white")
+personaje.penup()
+personaje.goto(0, 0)
+personaje.direction = "stop"
+
+# Crear las manzanas (puedes cambiar el color, la forma y posición inicial de la primera manzana)
+
+comida = turtle.Turtle()
+comida.speed(0)
+comida.shape("circle")
+comida.color("red")
+comida.penup()
+comida.goto(0, 100)
+
+# El cuerpo del personaje o de la serpiente, y también crea un marcador
+
+segmentos = []
+texto = turtle.Turtle()
+texto.speed(0)
+texto.color("white")
+texto.penup()
+texto.hideturtle()
+texto.goto(0, 260)
+texto.write("Score: 0   High Score: 0", align="center", font=("Courier", 24, "normal") )
+
+
+#Funciones que cambian la dirección del personaje/serpiente
+
+def arriba():
+    personaje.direction = "up"
+def abajo():
+    personaje.direction = "down"
+def derecha():
+    personaje.direction = "right"
+def izquierda():
+    personaje.direction = "left"
+
+# función que mueve a la serpiente/personaje
+# Para saber más del paquete turtle revisar la documentación: https://docs.python.org/3/library/turtle.html (para python 3.9.0 actualizado)
+
+
+def mov():
+    if personaje.direction == "up":
+        # Esto obtiene las coordenadas del objeto turtle
+        y = personaje.ycor()
+        # Y luego las cambia aumentando 20 pixeles, pues ese es el tamaño del objeto turtle
+        personaje.sety(y+20)
+    if personaje.direction == "down":
+        y = personaje.ycor()
+        personaje.sety(y - 20)
+    if personaje.direction == "right":
+        x = personaje.xcor()
+        personaje.setx(x + 20)
+    if personaje.direction == "left":
+        x = personaje.xcor()
+        personaje.setx(x-20)
+
+# Esto espera indicaciones del ususario para presionar botones (arriba, derecha, etc.)
+
+wn.listen()
+wn.onkeypress(arriba, "Up")
+wn.onkeypress(abajo, "Down")
+wn.onkeypress(derecha, "Right")
+wn.onkeypress(izquierda, "Left")
+
+# Ciclo while principal, un juego en sí es un ciclo muy grande que siempre debe estar ejecutándose
+
+while True:
+
+    # Esto crea límites del juego (recordar que nuestra ventana mide 600 pixeles), si son cruzados por la serpiente, empieza de nuevo el juego 
+    if personaje.xcor() > 280 or personaje.xcor() < -290 or personaje.ycor() < -290 or personaje.ycor() > 290:
+        # Espera de tiempo para indicar un nuevo juego
+        time.sleep(1)
+        # Devuelve a la serpiente a 0,0 (centro de la pantalla)
+        personaje.goto(0, 0)
+        # Empeiza sin ninguna dirección y espera a que una tecla sea presionada
+        personaje.direction = "stop"
+        # Esto manda a los segmentos de la serpiente lejos de la vista de la pantalla de 600 pixeles
+        for i in segmentos:
+            i.goto(1000, 1000)
+        # Y la lista es borrada al iniciar un nuevo juego
+        segmentos.clear()
+        
+        
+       # Se reinicia el score (pero no el high score)
+
+        score = 0
+        texto.clear()
+        texto.write("Score: {}   High Score: {}".format(score, high_score), align="center",
+                    font=("Courier", 24, "normal"))
+                    
+    # Aquí se crea el cuerpo de la serpiente tras haber comido una manzana (se nota que si la distancia entre la serpiente y la manzana es menor a 20 significa que
+    # sea ha cruzado en su camino, es decir que fue comida) y genera una nueva manzana al igual que un segmento del cuerpo de la serpiente
+
+    if personaje.distance(comida) < 20:
+        x = random.randint(-280, 280)
+        y = random.randint(-280, 280)
+        comida.goto(x, y)
+        nuevo_segmento = turtle.Turtle()
+        nuevo_segmento.speed(0)
+        nuevo_segmento.shape("square")
+        nuevo_segmento.color("white")
+        nuevo_segmento.penup()
+        segmentos.append(nuevo_segmento)
+        # el score avanza en 10 si come una manzana
+        score += 10
+        
+        # Se actualzia el highsocre si es menor que el score
+        if score > high_score:
+            high_score = score
+            texto.clear()
+            texto.write("Score: {}   High Score: {}".format(score, high_score), align="center",
+                        font=("Courier", 24, "normal"))
+
+    #Actualiza el total de los segmentos de la serpiente
+    totalseg = len(segmentos)
+    # cada segmento sigue al siguiente (el primer segmento creado sigue al personaje/cabeza)
+    for index in range(totalseg -1, 0, -1):
+        x = segmentos[index - 1].xcor()
+        y = segmentos[index - 1].ycor()
+        segmentos[index].goto(x, y)
+    # Detecta si el total de segmentos es mayor que 0, eso ocurre cuando la cabeza/personaje come una primer manzana
+    if totalseg > 0:
+        x = personaje.xcor()
+        y = personaje.ycor()
+        segmentos[0].goto(x, y)
+
+    # Llama las funciones de ventana, movimiento y time sleep 
+    wn.update()
+    mov()
+    time.sleep(posponer)
+    
+    # Detecta si la cabeza choca con su propio cuerpo y devuelve la cabeza a 0,0 sin ningún segmento
+    
+    for segmento in segmentos:
+        if segmento.distance(personaje) < 20:
+            time.sleep(1)
+            personaje.goto(0, 0)
+            personaje.direction = "stop"
+
+            for segmento in segmentos:
+                segmento.goto(1000, 1000)
+                core = 0
+                texto.clear()
+                texto.write("Score: {}   High Score: {}".format(score, high_score), align="center",
+                            font=("Courier", 24, "normal"))
+
+            segmentos.clear()            
