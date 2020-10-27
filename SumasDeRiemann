@@ -1,16 +1,18 @@
 # En lo siguiente:
 # a, b son los puntos del intervalo
 # n es el número de particiones
-# Si quieres cambiar la función, reemplaza eps por cada x que veas en la tuya
+
+import math
+
 def sumRiemann(a, b, n):
-    sum = 0
+    sumat = 0
     for i in range(n):
         particion = (b-a)/n
-        eps = a + (i/n)
-        funcion = 1 / eps
+        x = a + (i*particion)
+        funcion = 1/x
         suma = funcion * particion
-        sum += suma
+        sumat += suma
 
-    return sum
+    return sumat
 
-print(sumRiemann(1, 2, 100))
+print("El resultado es:", sumRiemann(1, 2, 1000))
